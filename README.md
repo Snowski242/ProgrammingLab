@@ -1,2 +1,2 @@
 # ProgrammingLab
-A top down shooter rogue like where the levels are randomly generated
+A 2D action platformer where getting a good time is the main goal
