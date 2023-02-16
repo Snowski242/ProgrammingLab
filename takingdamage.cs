@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class takingdamage : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class takingdamage : MonoBehaviour
         if(collision.gameObject.tag == "enemy")
         {
             Health.Damaged(1);
+        }
+        else if (collision.gameObject.tag == "Respawn")
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }
