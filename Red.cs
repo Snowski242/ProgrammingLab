@@ -11,7 +11,7 @@ public class Red : enemybehavior
         if (target)
         {
             rb.velocity = new Vector2(moveDirection.x, moveDirection.y) * redSpeed; 
-            Debug.Log("player near");
+            Debug.Log("player near at" + Pos.pos + ".");
 
         }
     }
