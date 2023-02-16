@@ -10,14 +10,27 @@ public class Playercontroller : MonoBehaviour
     [SerializeField] float speed; //we want to add thi in the spector in the unity
     [SerializeField] float jumpForce;
     [SerializeField] float dashForce;
+    [SerializeField] float walljumpForce;
 
     bool jumpInput;
     bool isGrounded;
     bool canDash;
     bool rollInput;
 
-    float timeToNextShot = 0;
+    //wall sliding
+    private bool IsWallSliding;
+    private float wallSlidingSpeed = 1.5f;
 
+    //wall jumping (courtesy of bendux on yt)
+    private bool isWallJumping;
+    private float wallJumpingDirection;
+    private float wallJumpingTime = 0.2f;
+    private float WallJumpingCounter;
+    private float WallJumpingDuration = 0.4f;
+    private Vector2 wallJumpingPower = new Vector2(8f, 16f);
+
+    [SerializeField] private Transform wallCheck;
+    [SerializeField] private LayerMask wallLayer;
 
 
     // Start is called before the first frame update
@@ -47,6 +60,9 @@ public class Playercontroller : MonoBehaviour
         {
             rollInput = false;
         }
+
+        WallSlide();
+        WallJump();
 
 
 
@@ -98,6 +114,82 @@ public class Playercontroller : MonoBehaviour
         canDash = false;
     }
 
+    void walljumpforce()
+    {
+        if (Physics2D.Raycast(transform.position, Vector2.left, 0.55f))
+        {
+            body.AddForce(-transform.right * dashForce, ForceMode2D.Impulse);
+            body.AddForce(transform.up * walljumpForce, ForceMode2D.Impulse);
+            trans.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        else if (Physics2D.Raycast(transform.position, Vector2.right, 0.55f))
+        {
+ 
+            body.AddForce(transform.right * 9, ForceMode2D.Impulse);
+            body.AddForce(transform.up * walljumpForce, ForceMode2D.Impulse);
+            trans.rotation = Quaternion.Euler(0, 180, 0);
+
+        }
+        // ctrl k u this tre
+
+
+    }
+
+    private bool IsWalled()
+    {
+        return Physics2D.OverlapCircle(wallCheck.position, 0.2f, wallLayer);
+    }
+
+    private void WallSlide()
+    {
+        if (IsWalled() && !isGrounded)
+        {
+            IsWallSliding = true;
+            body.velocity = new Vector2(body.velocity.x, Mathf.Clamp(body.velocity.y, -wallSlidingSpeed, float.MaxValue));
+
+        }
+        else
+        {
+            IsWallSliding = false;
+        }
+    }
+
+    //wall jumping
+
+    private void WallJump()
+    {
+        if(IsWallSliding)
+        {
+            isWallJumping = false;
+            wallJumpingDirection = -trans.localScale.x;
+            WallJumpingCounter = wallJumpingTime;
+
+            CancelInvoke(nameof(StopWallJumping));
+        }
+        else
+        {
+            WallJumpingCounter -= Time.deltaTime;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z) && WallJumpingCounter > 0f)
+        {
+            isWallJumping = true;
+            WallJumpingCounter = 0f;
+            walljumpforce();
+        }
+
+        if (transform.localScale.x != wallJumpingDirection)
+        {
+
+        }
+
+        Invoke(nameof(StopWallJumping), WallJumpingDuration);
+    }
+
+    private void StopWallJumping()
+    {
+        isWallJumping = false;
+    }
     private void OnCollisionEnter2D(Collision2D collision) // detects when the object collides with another object
     {
         if(collision.collider.tag == "Ground") // saying if the thing you're colliding with has the ground tag on it
