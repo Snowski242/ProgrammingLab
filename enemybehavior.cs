@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -38,6 +37,17 @@ public class enemybehavior : MonoBehaviour
         if (target)
         {
             rb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed;
+
+            TalkEachSecond();
         }
+    }
+
+    IEnumerator TalkEachSecond()
+    {
+        get myObj = new get();
+        myObj.Name = "Tre";
+        Debug.Log("Player is " + myObj.Name + ", how are you?");
+
+        yield return new WaitForSeconds(.5f);
     }
 }
