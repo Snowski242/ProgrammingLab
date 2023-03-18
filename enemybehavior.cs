@@ -38,7 +38,7 @@ public class enemybehavior : MonoBehaviour
         {
             rb.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed;
 
-            TalkEachSecond();
+            StartCoroutine(TalkEachSecond());
         }
     }
 
